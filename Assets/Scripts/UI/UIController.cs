@@ -64,8 +64,8 @@ public class UIController
     {
         GameObject resGo = GameObject.Instantiate(Resources.Load(path) as GameObject);
         if (resGo != null)
-        {
-            resGo.name = path;
+        {            
+            resGo.name = path.Remove(0, path.LastIndexOf('/') + 1);
             resGo.SetActive(false);
             if( parentTrans != null)
                 resGo.transform.parent = parentTrans;
