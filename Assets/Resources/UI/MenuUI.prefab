@@ -789,6 +789,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd7cdb3daebd02a41be60b925ca78151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiButtonEventTween:
+  - {fileID: 114069015019978770}
+  - {fileID: 114768895859519936}
+  - {fileID: 114088644664523538}
+  - {fileID: 114628426199198142}
 --- !u!114 &114628426199198142
 MonoBehaviour:
   m_ObjectHideFlags: 1

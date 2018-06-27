@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UIController
 {
+    // singleton
     private static UIController _instance = new UIController();
     public static UIController Instance
     {
@@ -14,9 +15,10 @@ public class UIController
     }
     
 
+    // all window stack
     private Stack<UIAbstract> _uiwindowstack = new Stack<UIAbstract>();
 
-
+    // canvas trans
     private Transform _canvasTransPanel;
     protected Transform canvasTransPanel
     {
@@ -42,7 +44,8 @@ public class UIController
     /// <param name="subwindow"></param>
     public void PushWindow(UIAbstract subwindow)
     {
-        _uiwindowstack.Push(subwindow);
+        if(_uiwindowstack.Contains(subwindow) == false)
+            _uiwindowstack.Push(subwindow);
     }
 
     /// <summary>
@@ -60,7 +63,7 @@ public class UIController
     /// <summary>
     /// Create UI
     /// </summary>    
-    public T CreateUI<T>(string path, Transform parentTrans = null)
+    public T CreateUI<T>(string path, UIStyle uiStyle, Transform parentTrans = null)
     {
         GameObject resGo = GameObject.Instantiate(Resources.Load(path) as GameObject);
         if (resGo != null)
@@ -75,7 +78,12 @@ public class UIController
             resGo.transform.localPosition = Vector3.zero;
             resGo.transform.localScale = Vector3.one;
             T component = resGo.GetComponent<T>();
-            if(component != null)
+
+            UIAbstract uitypecomponent = component as UIAbstract;
+            if (uitypecomponent != null)
+                uitypecomponent.SetStyle(uiStyle);
+
+            if (component != null)
                 return component;
 
             return default(T); 
