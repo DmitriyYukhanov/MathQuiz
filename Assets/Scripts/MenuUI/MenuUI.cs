@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuUI : MonoBehaviour {
+public class MenuUI : UIAbstract
+{
 
     /// <summary>
     /// 버튼
     /// </summary>
     private Transform[] buttons;
 
-	// Use this for initialization
-	void Start () {
+    /// <summary>
+    /// tween
+    /// </summary>
+    private EasyTween[] uiButtonEventTween;
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -18,4 +24,10 @@ public class MenuUI : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public override void OpenUI()
+    {
+        base.OpenUI();
+    }
+
 }

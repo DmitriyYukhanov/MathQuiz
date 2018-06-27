@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleUI : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
+public class BattleUI : UIAbstract
+{
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -13,4 +13,12 @@ public class BattleUI : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public override void OpenUI()
+    {
+        base.OpenUI();
+        Debug.Log(windowname);
+    }
+
+  
 }
