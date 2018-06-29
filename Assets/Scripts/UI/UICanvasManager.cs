@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeStage.AntiCheat.ObscuredTypes;
 
-public class UIManagerCanvas : MonoBehaviour
+public class UICanvasManager : MonoBehaviour
 {
     //private MenuUI menuUI;
     private BattleUI battleUI;    
