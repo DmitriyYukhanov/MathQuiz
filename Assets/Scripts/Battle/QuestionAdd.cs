@@ -8,30 +8,61 @@ public class Questionary
 
     protected MixNumber currentQuiz;
 
-    public void Clear()
+    public virtual void Clear()
     {
         queuedata.Clear();
         queuedata = null;
     }
 
     // correct answer
-    public bool IsCorrectAnswer(int number)
+    public bool IsCorrectAnswer(int answerindex)
     {        
-        if (currentQuiz.c == number)
+        if (currentQuiz.rightAnswerIndex == answerindex)
             return true;
 
         return false;
     }
 
     // next quiz
-    public bool NextQuiz()
+    public MixNumber NextQuiz()
     {
         // nomore quiz
         if (queuedata.Count <= 0)
-            return false;
+            return null;
 
         currentQuiz = queuedata.Dequeue();
-        return true;
+        return currentQuiz;
+    }
+
+    protected void CreateWrongAnswer(MixNumber mixnumber)
+    {
+        int randAnswer = -1;
+        for (int i = 0; i < mixnumber.Answer.Length; i++)
+        {
+            if (mixnumber.Answer[i] != -1)
+                randAnswer = mixnumber.Answer[i];
+        }
+
+        for (int  i = 0; i< mixnumber.Answer.Length; i++)
+        {
+            if(mixnumber.Answer[i] == -1)
+            {
+                int index = Random.Range(0, 2);
+                switch (index)
+                {
+                    case 0:
+                        mixnumber.Answer[i] = randAnswer + Random.Range(1, 100); 
+                        break;
+                    case 1:
+                        mixnumber.Answer[i] = randAnswer * Random.Range(1, 30);
+                        break;
+                    case 2:
+                        mixnumber.Answer[i] = randAnswer - Random.Range(1, 100);
+                        break;
+                }
+            }
+
+        }
     }
 }
 
@@ -41,11 +72,11 @@ public class QuestionAdd : Questionary
     /// <summary>
     /// 
     /// </summary>
-    public QuestionAdd()
+    public QuestionAdd(int quizcount)
     {
         queuedata = new Queue<MixNumber>();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < quizcount; i++)
         {
             MixNumber numdata = new MixNumber();
 
@@ -78,7 +109,10 @@ public class QuestionAdd : Questionary
                     break;
             }
 
-            numdata.c = numdata.a + numdata.b;
+            numdata.rightAnswerIndex = Random.Range(0, 3);
+            numdata.Answer[numdata.rightAnswerIndex] = numdata.a + numdata.b;
+            CreateWrongAnswer(numdata);
+            
             queuedata.Enqueue(numdata);
         }
     }

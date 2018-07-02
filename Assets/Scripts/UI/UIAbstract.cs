@@ -35,7 +35,7 @@ public abstract class UIAbstract : MonoBehaviour
     }
     
     // open
-    public void Open()
+    public virtual void Open()
     {
         if (IsOpen)
             return;

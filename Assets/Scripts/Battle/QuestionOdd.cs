@@ -9,11 +9,11 @@ public class QuestionOdd : Questionary
     /// <summary>
     /// 
     /// </summary>
-    public QuestionOdd()
+    public QuestionOdd(int quizcount)
     {
         queuedata = new Queue<MixNumber>();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < quizcount; i++)
         {
             MixNumber numdata = new MixNumber();
 
@@ -46,7 +46,9 @@ public class QuestionOdd : Questionary
                     break;
             }
 
-            numdata.c = numdata.a - numdata.b;
+            numdata.rightAnswerIndex = Random.Range(0, 3);
+            numdata.Answer[numdata.rightAnswerIndex] = numdata.a - numdata.b;
+            CreateWrongAnswer(numdata);
             queuedata.Enqueue(numdata);
         }
     }

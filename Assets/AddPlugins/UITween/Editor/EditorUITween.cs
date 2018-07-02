@@ -52,7 +52,10 @@ public class EditorUITween : Editor
             {
                 if (!Application.isPlaying)
                 {
-                    tweenScript.animationParts.SetAniamtioDuration(EditorGUILayout.Slider("Animation Duration (Sec)", tweenScript.animationParts.GetAnimationDuration(), 0.01f, 10f));
+                    float duration = EditorGUILayout.Slider("Animation Duration (Sec)", tweenScript.animationParts.GetAnimationDuration(), 0.01f, 10f);
+                    tweenScript.animationParts.SetAniamtioDuration(duration);
+                    foreach (EasyTween temp in targets)
+                        temp.animationParts.SetAniamtioDuration(duration);
 
                     EditorFade();
                     EditorPos();

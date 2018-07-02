@@ -6,14 +6,8 @@ public class UIController
 {
     // singleton
     private static UIController _instance = new UIController();
-    public static UIController Instance
-    {
-        get {
+    public static UIController Instance { get { return _instance; } }
 
-            return _instance;
-        }
-    }
-    
 
     // all window stack
     private Stack<UIAbstract> _uiwindowstack = new Stack<UIAbstract>();

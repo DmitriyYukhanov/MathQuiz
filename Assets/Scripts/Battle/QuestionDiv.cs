@@ -9,11 +9,11 @@ public class QuestionDiv : Questionary
     /// <summary>
     /// 
     /// </summary>
-    public QuestionDiv()
+    public QuestionDiv(int quizcount)
     {
         queuedata = new Queue<MixNumber>();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < quizcount; i++)
         {
             MixNumber numdata = new MixNumber();
 
@@ -21,34 +21,51 @@ public class QuestionDiv : Questionary
             switch (digit)
             {
                 case 0:
-                    {
-                        numdata.a = Random.Range(0, 9);
-                        numdata.b = Random.Range(0, 9);
+                    {                        
+                        GetQuestionNumber(3, 9,ref numdata);
                     }
                     break;
                 case 1:
-                    {
-                        numdata.a = Random.Range(0, 10);
-                        numdata.b = Random.Range(10, 99);
+                    {                        
+                        GetQuestionNumber(10, 30, ref numdata);
                     }
                     break;
                 case 2:
-                    {
-                        numdata.a = Random.Range(10, 99);
-                        numdata.b = Random.Range(10, 99);
+                    {                        
+                        GetQuestionNumber(10, 99, ref numdata);
                     }
                     break;
                 case 3:
-                    {
-                        numdata.a = Random.Range(100, 999);
-                        numdata.b = Random.Range(100, 999);
+                    {                        
+                        GetQuestionNumber(100, 999, ref numdata);
                     }
                     break;
             }
-
-            numdata.c = numdata.a / numdata.b;
+            CreateWrongAnswer(numdata);
             queuedata.Enqueue(numdata);
         }
+    }
+
+    private void GetQuestionNumber(int min, int max, ref MixNumber mixnumber)
+    {
+        while (true)
+        {
+            int rand = Random.Range(min,max);
+            if( prime(rand) == false)
+            {
+                DivdCount(rand);
+                if (gatheringAnswer.Count > 0)
+                {
+                    mixnumber.a = rand;                         
+                    break;
+                }
+            }
+        }
+        int randindex = Random.Range(0, gatheringAnswer.Count - 1);
+        mixnumber.b = gatheringAnswer[randindex];
+
+        mixnumber.rightAnswerIndex = Random.Range(0, 3);
+        mixnumber.Answer[mixnumber.rightAnswerIndex] = mixnumber.a / mixnumber.b;
     }
 
     // this number is prime
@@ -63,22 +80,31 @@ public class QuestionDiv : Questionary
         return true;
     }
 
-
+    private List<int> gatheringAnswer = new List<int>();
     private void DivdCount(int n)
     {
-
+        gatheringAnswer.Clear();
         while (n > 1)
         {
             for (int i = 2; i <= n; i++)
             {
-                if (n % i == 0)
-                {
-                    n = n / i;
-                    // i =  to combine count
-                    break;
-                }
-            }
+                if (n % i != 0)
+                    continue;
 
+                gatheringAnswer.Add(i);
+                n = n / i;                    
+                break;
+            }
+        }
+    }
+
+    public override void Clear()
+    {
+        base.Clear();
+        if(gatheringAnswer != null)
+        {
+            gatheringAnswer.Clear();
+            gatheringAnswer = null;
         }
     }
 
