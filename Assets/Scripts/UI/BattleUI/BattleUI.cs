@@ -5,7 +5,11 @@ using CodeStage.AntiCheat.ObscuredTypes;
 
 public class BattleUI : UIAbstract
 {
-    
+
+    //==========================================================
+    // serializedField
+    //==========================================================
+
     // quiz label center label tween
     [SerializeField]
     private EasyTween[] tweenQuizLabel;
@@ -21,7 +25,15 @@ public class BattleUI : UIAbstract
     // AnsweLabel
     [SerializeField]
     private UnityEngine.UI.Text[] answerLabels;
-    
+
+    // point label
+    [SerializeField]
+    private UnityEngine.UI.Text pointLabel;
+
+    //==========================================================
+    // variable
+    //==========================================================
+
     // quiz data and information
     private MakeQuestion quiz;
 
@@ -31,11 +43,39 @@ public class BattleUI : UIAbstract
     // start animation time
     private ObscuredFloat startTime = 0.0f;
 
-    //
+    // OnApp Pause Fail process
     private ObscuredBool IsForceFail = false;
-    
+
+    // point stack
+    private Queue<int> queuePoint = new Queue<int>();
+
+    // time update flag
+    private bool IsUpdatePoint = false;
+
+    // time 
+    private float timeUpdate = 0f;
+
+    // speed
+    private int updateSpeed = 1;
+
+    // target update max point
+    private int targetUpdateMaxPoint = 0;
+
+    // update point
+    private int updatePoint = 0;
+
+    // fixed total point
+    private float fixedUpdateTime = 0f;
+
+    // current target point
+    private int targetTotalPoint = 0;
+
+    // Time delay
+    private bool IsTimeDelay = false;
+
     public void Init()
     {
+        SetPoint(0);
         quiz = new MakeQuestion(QuestionType.ADD, 10);
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
         {
@@ -108,11 +148,11 @@ public class BattleUI : UIAbstract
 
         if (IsCorrect)
         {
-            
+            queuePoint.Enqueue(100000);            
         }
         else
         {
-            
+            queuePoint.Enqueue(100000);
         }
     }
     
@@ -129,4 +169,69 @@ public class BattleUI : UIAbstract
     {
         IsForceFail = true;
     }
+
+    private void SetPoint(int point)
+    {
+        pointLabel.text = string.Format("{0:#,###}", point);
+    }
+    
+    private void Update()
+    {
+        if (IsUpdatePoint)
+        {
+            timeUpdate += Time.deltaTime;
+            if (timeUpdate >= fixedUpdateTime)
+            {
+                timeUpdate = 0f;
+
+                CheckTimeReduce(targetUpdateMaxPoint, updatePoint);
+
+                updatePoint = Mathf.Min(updatePoint + updateSpeed, targetUpdateMaxPoint);
+
+                if (updatePoint == targetUpdateMaxPoint)
+                {                    
+                    IsUpdatePoint = false;
+                    targetTotalPoint += targetUpdateMaxPoint;
+                    SetPoint(targetTotalPoint);
+                    return;
+                }
+                                         
+                SetPoint(targetTotalPoint + updatePoint);                
+            }
+            return;
+        }
+
+        if (queuePoint.Count > 0 && IsUpdatePoint == false)
+        {
+            fixedUpdateTime = 0.0001f;
+            updatePoint = 0;
+            IsUpdatePoint = true;
+            IsTimeDelay = false;
+
+
+            if (queuePoint.Count == 1)
+                updateSpeed = 2100;
+            else if (queuePoint.Count >= 2)
+                updateSpeed = 4200;
+
+            targetUpdateMaxPoint = queuePoint.Dequeue();                        
+        }
+    }
+
+    // time reduce
+    private void CheckTimeReduce(int a, int b)
+    {
+        if (IsTimeDelay)
+            return;
+
+        if (a > b)
+            if (a - b <= 2000)
+            {
+                fixedUpdateTime = 0.03f;
+                IsTimeDelay = true;
+                updateSpeed = 100;
+                return;
+            }
+    }
+
 }

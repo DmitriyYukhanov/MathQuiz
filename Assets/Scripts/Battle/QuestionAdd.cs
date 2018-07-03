@@ -54,7 +54,7 @@ public class Questionary
                         mixnumber.Answer[i] = randAnswer + Random.Range(1, 100); 
                         break;
                     case 1:
-                        mixnumber.Answer[i] = randAnswer * Random.Range(1, 30);
+                        mixnumber.Answer[i] = randAnswer * Random.Range(2, 30);
                         break;
                     case 2:
                         mixnumber.Answer[i] = randAnswer - Random.Range(1, 100);

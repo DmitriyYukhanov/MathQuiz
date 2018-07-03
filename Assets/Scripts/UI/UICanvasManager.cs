@@ -14,11 +14,11 @@ public class UICanvasManager : MonoBehaviour
         //menuUI = UIController.Instance.CreateUI<MenuUI>("UI/MenuUI", UIStyle.POPUP);
         //menuUI.Open();
 
-        //battleUI = UIController.Instance.CreateUI<BattleUI>("UI/BattleUI", UIStyle.UI);
-        //battleUI.Init();        
-        //battleUI.Open();
-        //battleUI.StartGame();
-        
+        battleUI = UIController.Instance.CreateUI<BattleUI>("UI/BattleUI", UIStyle.UI);
+        battleUI.Init();
+        battleUI.Open();
+        battleUI.StartGame();
+
     }
 
     // test update
