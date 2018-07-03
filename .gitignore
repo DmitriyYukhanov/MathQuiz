@@ -1,0 +1,9 @@
+/obj
+/Library
+/Temp
+/UnityPackageManager
+MathQuiz.Editor.csproj
+MathQuiz.Editor.Plugins.csproj
+MathQuiz.Plugins.csproj
+MathQuiz.sln
+MathQuiz.userprefs
