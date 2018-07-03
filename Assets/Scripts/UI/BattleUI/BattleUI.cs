@@ -46,9 +46,6 @@ public class BattleUI : UIAbstract
     // OnApp Pause Fail process
     private ObscuredBool IsForceFail = false;
 
-    // point stack
-    private Queue<int> queuePoint = new Queue<int>();
-
     // time update flag
     private bool IsUpdatePoint = false;
 
@@ -148,11 +145,11 @@ public class BattleUI : UIAbstract
 
         if (IsCorrect)
         {
-            queuePoint.Enqueue(100000);            
+            quiz.CalcuratePoint();         
         }
         else
         {
-            queuePoint.Enqueue(100000);
+            quiz.CalcuratePoint();
         }
     }
     
@@ -201,21 +198,18 @@ public class BattleUI : UIAbstract
             return;
         }
 
-        if (queuePoint.Count > 0 && IsUpdatePoint == false)
+        if (quiz.IsEnablePoint && IsUpdatePoint == false)
         {
             fixedUpdateTime = 0.0001f;
             updatePoint = 0;
             IsUpdatePoint = true;
             IsTimeDelay = false;
 
+            updateSpeed = 2100;
 
-            if (queuePoint.Count == 1)
-                updateSpeed = 2100;
-            else if (queuePoint.Count >= 2)
-                updateSpeed = 4200;
-
-            targetUpdateMaxPoint = queuePoint.Dequeue();                        
+            targetUpdateMaxPoint = quiz.DequePoint();
         }
+
     }
 
     // time reduce

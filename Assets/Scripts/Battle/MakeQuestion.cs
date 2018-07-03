@@ -3,28 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeStage.AntiCheat.ObscuredTypes;
 
-public enum QuestionType{
-    ADD,
-    ODD,
-    DIV,
-    MUL,
-}
-
-public class MixNumber
-{
-    public ObscuredInt a; 
-    public ObscuredInt b;
-    public ObscuredInt rightAnswerIndex;
-
-    public ObscuredInt[] Answer = new ObscuredInt[4];    
-
-    public MixNumber()
-    {
-        for (int i = 0; i < Answer.Length; i++)
-            Answer[i] = -1;
-    }
-}
-
 public class MakeQuestion
 {
     // game type
@@ -32,6 +10,15 @@ public class MakeQuestion
 
     // question
     private Questionary questionary;
+
+    // point stack
+    private Queue<int> queuePoint = new Queue<int>();
+
+    // check directing point UI
+    public bool IsEnablePoint{
+        get { return queuePoint.Count > 0 ? true : false; }
+    }
+
 
     public MakeQuestion(QuestionType type, int quizcount)
     {
@@ -98,6 +85,18 @@ public class MakeQuestion
     {
         return questionary.IsCorrectAnswer(answeIndex);
     }
-    
+
+    // get point
+    public int DequePoint(){
+        if (queuePoint.Count <= 0)
+            return 0;
+        return queuePoint.Dequeue();
+    }
+
+    // calcurate point
+    public void CalcuratePoint(){
+        queuePoint.Enqueue(10000);
+    }
+
   
 }
