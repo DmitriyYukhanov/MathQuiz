@@ -30,6 +30,9 @@ public class BattleUI : UIAbstract
     [SerializeField]
     private UnityEngine.UI.Text pointLabel;
 
+    // time lable
+    [SerializeField]
+    private UnityEngine.UI.Text secLabel;
     //==========================================================
     // variable
     //==========================================================
@@ -50,7 +53,7 @@ public class BattleUI : UIAbstract
     private bool IsUpdatePoint = false;
 
     // time 
-    private float timeUpdate = 0f;
+    private float updatePointTime = 0f;
 
     // speed
     private int updateSpeed = 1;
@@ -70,8 +73,11 @@ public class BattleUI : UIAbstract
     // Time delay
     private bool IsTimeDelay = false;
 
+    private float limitTime;
+
     public void Init()
     {
+        
         SetPoint(0);
         quiz = new MakeQuestion(QuestionType.ADD, 10);
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
@@ -136,12 +142,7 @@ public class BattleUI : UIAbstract
 
         int index = int.Parse(data);
         bool IsCorrect = quiz.CorrectAnswer(index);
-
-        tweenQuizLabel[1].SetStartValues();
-        tweenQuizLabel[1].ChangeSetState(false);
-        tweenQuizLabel[1].OpenCloseObjectAnimation();
-        float NextTime = tweenQuizLabel[1].GetAnimationDuration();
-        Invoke("NextQuiz", NextTime + 0.1f);
+        NextQuizAnimated();
 
         if (IsCorrect)
         {
@@ -152,6 +153,18 @@ public class BattleUI : UIAbstract
             quiz.CalcuratePoint();
         }
     }
+
+    // next quize animated
+    private void NextQuizAnimated()
+    {
+        tweenQuizLabel[1].SetStartValues();
+        tweenQuizLabel[1].ChangeSetState(false);
+        tweenQuizLabel[1].OpenCloseObjectAnimation();
+        float NextTime = tweenQuizLabel[1].GetAnimationDuration();
+        Invoke("NextQuiz", NextTime + 0.1f);
+
+    }
+
     
     // button Event Active
     private void SetButtonActive()
@@ -171,15 +184,27 @@ public class BattleUI : UIAbstract
     {
         pointLabel.text = string.Format("{0:#,###}", point);
     }
+
+    private void SetTime(int time){
+        secLabel.text = string.Format("{0}", time);
+    }
+
     
     private void Update()
     {
+        limitTime += Time.deltaTime;
+        if (limitTime >= 1.0f)
+        {
+            limitTime = 0f;
+            SetTime(quiz.UpdateDownTime);
+        }
+
         if (IsUpdatePoint)
         {
-            timeUpdate += Time.deltaTime;
-            if (timeUpdate >= fixedUpdateTime)
+            updatePointTime += Time.deltaTime;
+            if (updatePointTime >= fixedUpdateTime)
             {
-                timeUpdate = 0f;
+                updatePointTime = 0f;
 
                 CheckTimeReduce(targetUpdateMaxPoint, updatePoint);
 

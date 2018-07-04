@@ -1001,6 +1001,7 @@ MonoBehaviour:
   - {fileID: 114461841105573552}
   - {fileID: 114675725686700362}
   pointLabel: {fileID: 114865431336471414}
+  secLabel: {fileID: 114637467750895144}
 --- !u!114 &114498923362928076
 MonoBehaviour:
   m_ObjectHideFlags: 1

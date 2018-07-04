@@ -14,14 +14,23 @@ public class MakeQuestion
     // point stack
     private Queue<int> queuePoint = new Queue<int>();
 
+    // limit time
+    private ObscuredInt _timeSec;
+    public int TimeSec{ get { return _timeSec; }}
+
+    public int UpdateDownTime
+    {
+        get { return _timeSec--; }
+    }
+
     // check directing point UI
     public bool IsEnablePoint{
         get { return queuePoint.Count > 0 ? true : false; }
     }
 
-
     public MakeQuestion(QuestionType type, int quizcount)
     {
+        _timeSec = 30;
         quetionType = type;
         switch (type)
         {
@@ -55,6 +64,8 @@ public class MakeQuestion
 
         if (mixdata == null)
             return false;
+        
+        _timeSec = 30;
 
         switch (quetionType)
         {
