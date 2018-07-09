@@ -41,7 +41,7 @@ public class BattleUI : UIAbstract
     private MakeQuestion quiz;
 
     // button delay
-    private bool IsButtonActive = false;
+    private bool IsAction = false;
 
     // start animation time
     private ObscuredFloat startTime = 0.0f;
@@ -75,10 +75,11 @@ public class BattleUI : UIAbstract
 
     private float limitTime;
 
+    // active time
+    private bool IsActiveTime = false;
+
     public void Init()
-    {
-        
-        SetPoint(0);
+    {                
         quiz = new MakeQuestion(QuestionType.ADD, 10);
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
         {
@@ -92,6 +93,9 @@ public class BattleUI : UIAbstract
                 OnPressedEvent(index);
             });
         }
+
+        SetPoint(0);
+        SetTime(quiz.TimeSec);
     }
 
     public void Clear()
@@ -119,7 +123,7 @@ public class BattleUI : UIAbstract
         tweenQuizLabel[0].SetStartValues();
         tweenQuizLabel[0].ChangeSetState(false);
         tweenQuizLabel[0].OpenCloseObjectAnimation();
-        float buttonActiveTime = tweenQuizLabel[0].GetAnimationDuration();
+        float startActiveTime = tweenQuizLabel[0].GetAnimationDuration();
 
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
         {
@@ -129,17 +133,15 @@ public class BattleUI : UIAbstract
             tweenAnswerLabel[i].GetAnimationDuration();
         }
 
-        Invoke("SetButtonActive", buttonActiveTime + 0.1f);
+        Invoke("SetActive", startActiveTime + 0.1f);
     }
 
     // button Event
     private void OnPressedEvent(string data)
     {
-        if (IsButtonActive == false)
+        if (IsAction == false)
             return;
-
-        IsButtonActive = false;
-
+                
         int index = int.Parse(data);
         bool IsCorrect = quiz.CorrectAnswer(index);
         NextQuizAnimated();
@@ -152,24 +154,28 @@ public class BattleUI : UIAbstract
         {
             quiz.CalcuratePoint();
         }
-    }
+    }    
 
     // next quize animated
     private void NextQuizAnimated()
     {
+        IsAction = false;
+        quiz.ResetTime();
+        SetTime(quiz.TimeSec);
+
         tweenQuizLabel[1].SetStartValues();
         tweenQuizLabel[1].ChangeSetState(false);
         tweenQuizLabel[1].OpenCloseObjectAnimation();
-        float NextTime = tweenQuizLabel[1].GetAnimationDuration();
+        float NextTime = tweenQuizLabel[1].GetAnimationDuration();        
         Invoke("NextQuiz", NextTime + 0.1f);
 
     }
 
     
     // button Event Active
-    private void SetButtonActive()
+    private void SetActive()
     {
-        IsButtonActive = true;
+        IsAction = true;
 
         // start time 
     }
@@ -185,40 +191,57 @@ public class BattleUI : UIAbstract
         pointLabel.text = string.Format("{0:#,###}", point);
     }
 
-    private void SetTime(int time){
-        secLabel.text = string.Format("{0}", time);
+    private void SetTime(float time){
+        secLabel.text = string.Format("{0:f3}", time);
     }
 
     
     private void Update()
     {
-        limitTime += Time.deltaTime;
-        if (limitTime >= 1.0f)
-        {
-            limitTime = 0f;
-            SetTime(quiz.UpdateDownTime);
-        }
+        float deltatime = Time.deltaTime;
+        UpdateTime(deltatime);
+        ResetUpdatePointTime(deltatime);
+    }
 
+    // udpate limit time
+    private void UpdateTime(float deltatime)
+    {
+        if (IsAction == false)
+            return;
+        
+        limitTime += deltatime;
+        if (limitTime >= 1.0f)        
+            limitTime = 0.000f;
+        
+        if (quiz.UpdateDownTime(deltatime))        
+            NextQuizAnimated();                    
+
+        SetTime(quiz.TimeSec);
+    }
+
+    //
+    private void ResetUpdatePointTime(float deltatime)
+    {
         if (IsUpdatePoint)
         {
-            updatePointTime += Time.deltaTime;
+            updatePointTime += deltatime;
             if (updatePointTime >= fixedUpdateTime)
             {
                 updatePointTime = 0f;
 
-                CheckTimeReduce(targetUpdateMaxPoint, updatePoint);
+                UpdatePointTime(targetUpdateMaxPoint, updatePoint);
 
                 updatePoint = Mathf.Min(updatePoint + updateSpeed, targetUpdateMaxPoint);
 
                 if (updatePoint == targetUpdateMaxPoint)
-                {                    
+                {
                     IsUpdatePoint = false;
                     targetTotalPoint += targetUpdateMaxPoint;
                     SetPoint(targetTotalPoint);
                     return;
                 }
-                                         
-                SetPoint(targetTotalPoint + updatePoint);                
+
+                SetPoint(targetTotalPoint + updatePoint);
             }
             return;
         }
@@ -234,16 +257,17 @@ public class BattleUI : UIAbstract
 
             targetUpdateMaxPoint = quiz.DequePoint();
         }
-
     }
+    
 
     // time reduce
-    private void CheckTimeReduce(int a, int b)
+    private void UpdatePointTime(int a, int b)
     {
         if (IsTimeDelay)
             return;
 
         if (a > b)
+        {
             if (a - b <= 2000)
             {
                 fixedUpdateTime = 0.03f;
@@ -251,6 +275,7 @@ public class BattleUI : UIAbstract
                 updateSpeed = 100;
                 return;
             }
+        }
     }
 
 }

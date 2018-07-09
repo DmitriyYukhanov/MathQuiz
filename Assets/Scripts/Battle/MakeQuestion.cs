@@ -14,13 +14,23 @@ public class MakeQuestion
     // point stack
     private Queue<int> queuePoint = new Queue<int>();
 
-    // limit time
-    private ObscuredInt _timeSec;
-    public int TimeSec{ get { return _timeSec; }}
+    private readonly ObscuredFloat limitTime = 10.000f;
 
-    public int UpdateDownTime
+    // limit time
+    private ObscuredFloat _timeSec;
+    public ObscuredFloat TimeSec { get { return _timeSec; }}
+
+    public void ResetTime()
     {
-        get { return _timeSec--; }
+        _timeSec = limitTime;
+    }
+
+    public bool UpdateDownTime(float deltaTime)
+    {
+        _timeSec -= deltaTime;
+        if (_timeSec <= 0.0f)                    
+            return true;
+        return false;        
     }
 
     // check directing point UI
@@ -30,7 +40,7 @@ public class MakeQuestion
 
     public MakeQuestion(QuestionType type, int quizcount)
     {
-        _timeSec = 30;
+        _timeSec = limitTime;
         quetionType = type;
         switch (type)
         {
@@ -65,7 +75,7 @@ public class MakeQuestion
         if (mixdata == null)
             return false;
         
-        _timeSec = 30;
+        _timeSec = limitTime;
 
         switch (quetionType)
         {
