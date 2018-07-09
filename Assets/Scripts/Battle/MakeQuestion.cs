@@ -14,7 +14,7 @@ public class MakeQuestion
     // point stack
     private Queue<int> queuePoint = new Queue<int>();
 
-    private readonly ObscuredFloat limitTime = 10.000f;
+    private readonly ObscuredFloat limitTime = 2.000f;
 
     // limit time
     private ObscuredFloat _timeSec;

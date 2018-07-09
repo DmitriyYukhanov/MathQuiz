@@ -18,7 +18,7 @@ public class MenuUI : UIAbstract
     // enable active on
     private void OnEnable()
     {
-        StartCoroutine(IEShowButton());
+        Invoke("InvokeShowButton", 0.01f);
     }
 
     // Update is called once per frame
@@ -27,16 +27,15 @@ public class MenuUI : UIAbstract
 	}
 
     // show button
-    IEnumerator IEShowButton()
+    private void InvokeShowButton()
     {
-        yield return new WaitForSeconds(0.001f);
         foreach (EasyTween tween in uiButtonEventTween)
         {
             tween.SetStartValues();
             tween.OpenCloseObjectAnimation();
 
             UnityEngine.UI.Button buttonevent = tween.gameObject.GetComponent<UnityEngine.UI.Button>();
-            buttonevent.onClick.AddListener(OnButtonEvent);
+            buttonevent.onClick.AddListener(delegate { OnButtonEvent(); });
         }
     }
 
