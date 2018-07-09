@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Closure 
+public struct QuetionTypeClosure
+{
+    public QuestionType questionType;
+}
+
 public class MenuUI : UIAbstract
-{    
+{
     // button tweens
     [SerializeField]
     private EasyTween[] uiButtonEventTween;
 
-    // Use this for initialization
-    void Start () {
+    private BattleUI battleUI;
 
-        uiButtonEventTween = GetComponentsInChildren<EasyTween>();
-        
+    // Use this for initialization
+    void Start()
+    {
+        if(uiButtonEventTween == null)
+            uiButtonEventTween = GetComponentsInChildren<EasyTween>();
     }
 
     // enable active on
@@ -22,26 +30,46 @@ public class MenuUI : UIAbstract
     }
 
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update()
+    {
+
+    }
 
     // show button
     private void InvokeShowButton()
     {
+        Debug.Log("Restart");
+        int index = 0;
         foreach (EasyTween tween in uiButtonEventTween)
         {
             tween.SetStartValues();
-            tween.OpenCloseObjectAnimation();
+            tween.ChangeSetState(false);
+            tween.OpenCloseObjectAnimation();            
 
+            QuetionTypeClosure eventIndex;
+            eventIndex.questionType = (QuestionType)index++;
+            // index 를 사용하게되면 stack 저장되어 값을 공유하게 됨. 
+            // 고정값을 가질 수 없게됨.
             UnityEngine.UI.Button buttonevent = tween.gameObject.GetComponent<UnityEngine.UI.Button>();
-            buttonevent.onClick.AddListener(delegate { OnButtonEvent(); });
+            buttonevent.onClick.RemoveAllListeners();
+            buttonevent.onClick.AddListener(delegate
+            {
+                OnButtonEvent(eventIndex.questionType);
+            });
         }
     }
 
     // button event
-    private void OnButtonEvent()
+    private void OnButtonEvent(QuestionType quetionType)
     {
-        Debug.Log(name);
+        if (battleUI == null)
+        {
+            battleUI = UIController.Instance.CreateUI<BattleUI>("UI/BattleUI", UIStyle.UI, this);            
+        }
+
+        Close();
+        battleUI.Init(quetionType);
+        battleUI.Open();
+        battleUI.StartGame();
     }
 }

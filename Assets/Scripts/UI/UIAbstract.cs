@@ -21,6 +21,12 @@ public abstract class UIAbstract : MonoBehaviour
     // open chek
     protected bool IsOpen = false;
 
+    public delegate void OnDelegateEvent();
+    public event OnDelegateEvent OnExitEventHandler;
+
+    // open me parent UI
+    protected UIAbstract parentOpenMeUI;
+
     // constructor
     public UIAbstract()
     {
@@ -28,10 +34,12 @@ public abstract class UIAbstract : MonoBehaviour
     }
 
     // setting style
-    public void SetStyle(UIStyle style)
-    {
+    public void SetStyle(UIStyle style, UIAbstract opendMe)
+    {   
         if(uiStype == UIStyle.NONE)
             uiStype = style;
+
+        parentOpenMeUI = opendMe;
     }
     
     // open
@@ -55,7 +63,11 @@ public abstract class UIAbstract : MonoBehaviour
             case UIStyle.POPUP:
                 GameObject.Destroy(gameObject);
                 break;
-        }   
-    }    
+        }
+
+        if (OnExitEventHandler != null)
+            OnExitEventHandler();
+
+    }
 }
 

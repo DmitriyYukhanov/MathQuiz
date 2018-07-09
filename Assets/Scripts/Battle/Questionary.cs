@@ -6,9 +6,9 @@ using CodeStage.AntiCheat.ObscuredTypes;
 public enum QuestionType
 {
     ADD,
-    ODD,
-    DIV,
+    ODD,    
     MUL,
+    DIV,
 }
 
 public class MixNumber

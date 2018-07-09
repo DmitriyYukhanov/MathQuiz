@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeStage.AntiCheat.ObscuredTypes;
 
+// Closure 
+public struct IndexClosure
+{
+    public int Index;
+}
+
 public class BattleUI : UIAbstract
 {
 
@@ -79,21 +85,25 @@ public class BattleUI : UIAbstract
 
     private float limitTime;
 
-    public void Init()
+    public void Init(QuestionType quetionType)
     {
-        quiz = new MakeQuestion(QuestionType.ADD, 3);
+        quiz = new MakeQuestion(quetionType, 3);
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
         {
             startTime = tweenAnswerLabel[i].GetAnimationDuration();
             UnityEngine.UI.Button buton = tweenAnswerLabel[i].gameObject.GetComponent<UnityEngine.UI.Button>();
 
-            string index = i.ToString();
+            IndexClosure indexclosure;
+            indexclosure.Index = i;
             buton.onClick.RemoveAllListeners();
             buton.onClick.AddListener(delegate
-            {
-                OnPressedEvent(i);
+            {   
+                OnPressedEvent(indexclosure.Index);
             });
         }
+
+        OnExitEventHandler -= OnExitEvent;
+        OnExitEventHandler += OnExitEvent;
 
         SetPoint(0);
         SetReadyCount(3, true);
@@ -131,9 +141,8 @@ public class BattleUI : UIAbstract
             // =================
             // game over dealing
             // =================
-            Init();
+            // Close
             InitAnimation();
-            StartGame();
             return false;
         }
 
@@ -171,12 +180,11 @@ public class BattleUI : UIAbstract
     }
 
     // button Event
-    private void OnPressedEvent(int data)
+    private void OnPressedEvent(int index)
     {
         if (IsAction == false)
             return;
-
-        int index = data;
+        
         bool IsCorrect = quiz.CorrectAnswer(index);
         NextQuizAnimated();
 
@@ -324,4 +332,10 @@ public class BattleUI : UIAbstract
 
     }
 
+    //ExitEvent
+    private void OnExitEvent()
+    {
+        if (parentOpenMeUI != null)
+            parentOpenMeUI.Open();
+    }
 }

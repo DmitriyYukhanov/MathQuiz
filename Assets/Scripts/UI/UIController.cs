@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UIBackState
+{
+    DO_NOT_BACK,
+    ENABLE_BACK,
+}
+
 public class UIController
 {
     // singleton
@@ -12,6 +18,12 @@ public class UIController
     // all window stack
     private Stack<UIAbstract> _uiwindowstack = new Stack<UIAbstract>();
 
+    // currentUI
+    private UIAbstract _currentUI;
+
+    // back state
+    private UIBackState _uiBackState = UIBackState.ENABLE_BACK;
+
     // canvas trans
     private Transform _canvasTransPanel;
     protected Transform canvasTransPanel
@@ -20,7 +32,7 @@ public class UIController
         {
             if(_canvasTransPanel == null)
             {
-                GameObject panelgameObject = GameObject.Find("UIManagerCanvas/Panel");
+                GameObject panelgameObject = GameObject.Find("UICanvasManager/Panel");
                 if (panelgameObject != null)
                     _canvasTransPanel = panelgameObject.transform;
                 else
@@ -43,13 +55,32 @@ public class UIController
     }
 
     /// <summary>
+    /// Get Current UI TOP
+    /// </summary>
+    /// <returns></returns>
+    public UIAbstract CurrentUI()
+    {
+        return _currentUI;
+    }
+
+    /// <summary>
     /// pop window
     /// </summary>
     /// <returns></returns>
-    public UIAbstract PopWindow()
+    public UIAbstract GetBackWindow()
     {
-        if (_uiwindowstack.Count > 0)
-            return _uiwindowstack.Pop();
+        if (_uiBackState == UIBackState.DO_NOT_BACK)
+            return null;
+        
+        if(_uiwindowstack.Count > 1)
+        {
+            UIAbstract backUI = _uiwindowstack.Pop();
+            _currentUI = _uiwindowstack.Pop();
+            if (_uiwindowstack.Count == 0)
+                _uiwindowstack.Push(_currentUI);
+
+            return backUI;
+        }
         else
             return null;
     }
@@ -57,7 +88,7 @@ public class UIController
     /// <summary>
     /// Create UI
     /// </summary>    
-    public T CreateUI<T>(string path, UIStyle uiStyle, Transform parentTrans = null)
+    public T CreateUI<T>(string path, UIStyle uiStyle, UIAbstract opendMe = null, Transform parentTrans = null)
     {
         GameObject resGo = GameObject.Instantiate(Resources.Load(path) as GameObject);
         if (resGo != null)
@@ -73,9 +104,8 @@ public class UIController
             resGo.transform.localScale = Vector3.one;
             T component = resGo.GetComponent<T>();
 
-            UIAbstract uitypecomponent = component as UIAbstract;
-            if (uitypecomponent != null)
-                uitypecomponent.SetStyle(uiStyle);
+            _currentUI = component as UIAbstract;
+            _currentUI.SetStyle(uiStyle, opendMe);
 
             if (component != null)
                 return component;
@@ -85,6 +115,8 @@ public class UIController
 
         return default(T);
     }
+
+   
     
 }
 

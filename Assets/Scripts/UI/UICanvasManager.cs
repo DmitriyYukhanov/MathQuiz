@@ -5,20 +5,14 @@ using CodeStage.AntiCheat.ObscuredTypes;
 
 public class UICanvasManager : MonoBehaviour
 {
-    //private MenuUI menuUI;
-    private BattleUI battleUI;    
+    private MenuUI menuUI;
+    
 
     // Use this for initialization
     void OnEnable() {
 
-        //menuUI = UIController.Instance.CreateUI<MenuUI>("UI/MenuUI", UIStyle.POPUP);
-        //menuUI.Open();
-
-        //battleUI = UIController.Instance.CreateUI<BattleUI>("UI/BattleUI", UIStyle.UI);
-        //battleUI.Init();
-        //battleUI.Open();
-        //battleUI.StartGame();
-
+        menuUI = UIController.Instance.CreateUI<MenuUI>("UI/MenuUI", UIStyle.UI);
+        menuUI.Open();
     }
 
     // test update
@@ -26,7 +20,8 @@ public class UICanvasManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            UIAbstract uiwindow = UIController.Instance.PopWindow();
+            // 배버튼이 작동 안하도록 하는 상황 만들기
+            UIAbstract uiwindow = UIController.Instance.GetBackWindow();
             if (uiwindow != null)
                 uiwindow.Close();
         }
