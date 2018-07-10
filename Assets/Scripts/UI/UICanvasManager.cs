@@ -5,14 +5,15 @@ using CodeStage.AntiCheat.ObscuredTypes;
 
 public class UICanvasManager : MonoBehaviour
 {
-    private MenuUI menuUI;
+    // menuUI
+    private SelectQuizMenuUI selectQuizMenuUI;
     
 
     // Use this for initialization
     void OnEnable() {
 
-        menuUI = UIController.Instance.CreateUI<MenuUI>("UI/MenuUI", UIStyle.UI);
-        menuUI.Open();
+        selectQuizMenuUI = UIController.Instance.CreateUI<SelectQuizMenuUI>("UI/SelectQuizMenuUI", UIStyle.UI);
+        selectQuizMenuUI.Open();
     }
 
     // test update

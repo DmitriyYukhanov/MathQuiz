@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 4834503600167654}
   - component: {fileID: 114569287182958342}
   m_Layer: 5
-  m_Name: MenuUI
+  m_Name: SelectQuizMenuUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

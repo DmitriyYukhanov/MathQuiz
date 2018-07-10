@@ -191,4 +191,11 @@ public class EasyTween : MonoBehaviour
         if (this.animationParts.RotationPropetiesAnim.IsRotationEnabled())
             selectedTransform.localEulerAngles = this.animationParts.RotationPropetiesAnim.StartRot;      
     }
+
+    public void ResetStartAction()
+    {
+        SetStartValues();
+        ChangeSetState(false);
+        OpenCloseObjectAnimation();
+    }
 }

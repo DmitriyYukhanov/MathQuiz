@@ -8,7 +8,7 @@ public struct QuetionTypeClosure
     public QuestionType questionType;
 }
 
-public class MenuUI : UIAbstract
+public class SelectQuizMenuUI : UIAbstract
 {
     // button tweens
     [SerializeField]
@@ -19,8 +19,12 @@ public class MenuUI : UIAbstract
     // Use this for initialization
     void Start()
     {
-        if(uiButtonEventTween == null)
+        if (uiButtonEventTween == null)
+        {
             uiButtonEventTween = GetComponentsInChildren<EasyTween>();
+            foreach (EasyTween tween in uiButtonEventTween)
+                tween.gameObject.SetActive(false);
+        }
     }
 
     // enable active on
@@ -37,14 +41,12 @@ public class MenuUI : UIAbstract
 
     // show button
     private void InvokeShowButton()
-    {
-        Debug.Log("Restart");
+    {        
         int index = 0;
         foreach (EasyTween tween in uiButtonEventTween)
         {
-            tween.SetStartValues();
-            tween.ChangeSetState(false);
-            tween.OpenCloseObjectAnimation();            
+            tween.gameObject.SetActive(true);
+            tween.ResetStartAction();
 
             QuetionTypeClosure eventIndex;
             eventIndex.questionType = (QuestionType)index++;

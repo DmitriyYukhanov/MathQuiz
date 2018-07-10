@@ -43,6 +43,19 @@ public class BattleUI : UIAbstract
     // readyCountv
     [SerializeField]
     private UnityEngine.UI.Text readyCountLabel;
+
+    // ready count tween
+    [SerializeField]
+    private EasyTween readyCountTween;
+
+    // clear message
+    [SerializeField]
+    private UnityEngine.UI.Text clearMessage;
+
+    // clear message
+    [SerializeField]
+    private EasyTween clearMessageTween;
+
     //==========================================================
     // variable
     //==========================================================
@@ -88,26 +101,36 @@ public class BattleUI : UIAbstract
     public void Init(QuestionType quetionType)
     {
         quiz = new MakeQuestion(quetionType, 3);
+
+        UnityEngine.UI.Button button = null;
+        button = clearMessage.gameObject.GetComponent<UnityEngine.UI.Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(OnClearExit);
+        }
+
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
         {
             startTime = tweenAnswerLabel[i].GetAnimationDuration();
-            UnityEngine.UI.Button buton = tweenAnswerLabel[i].gameObject.GetComponent<UnityEngine.UI.Button>();
+            button = tweenAnswerLabel[i].gameObject.GetComponent<UnityEngine.UI.Button>();
 
             IndexClosure indexclosure;
             indexclosure.Index = i;
-            buton.onClick.RemoveAllListeners();
-            buton.onClick.AddListener(delegate
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(delegate
             {   
                 OnPressedEvent(indexclosure.Index);
             });
         }
 
-        OnExitEventHandler -= OnExitEvent;
-        OnExitEventHandler += OnExitEvent;
+        //OnExitEventHandler -= OnExitEvent;
+        //OnExitEventHandler += OnExitEvent;
 
         SetPoint(0);
         SetReadyCount(3, true);
         SetTime(quiz.TimeSec);
+        SetActiveClearMessage(false);
     }
 
     public void Clear()
@@ -125,13 +148,17 @@ public class BattleUI : UIAbstract
         int readyCount = 3;
         while (readyCount > 0)
         {
-            yield return new WaitForSeconds(0.5f);
+            if (readyCount == 3)
+                yield return new WaitForSeconds(0.3f);
+                        
+            readyCountTween.ResetStartAction();
             readyCount--;
             SetReadyCount(readyCount, true);
+            yield return new WaitForSeconds(readyCountTween.GetAnimationDuration() + 0.1f);
         }
 
         SetReadyCount(0, false);
-        Invoke("InvokeNextQuiz", startTime + 0.03f);
+        InvokeNextQuiz();
     }
 
     private bool InvokeNextQuiz()
@@ -142,6 +169,7 @@ public class BattleUI : UIAbstract
             // game over dealing
             // =================
             // Close
+            ShowClearMessage("OK");
             InitAnimation();
             return false;
         }
@@ -162,19 +190,12 @@ public class BattleUI : UIAbstract
 
     // start animation
     private void StartAnimation()
-    {
-        tweenQuizLabel[0].SetStartValues();
-        tweenQuizLabel[0].ChangeSetState(false);
-        tweenQuizLabel[0].OpenCloseObjectAnimation();
+    {        
+        tweenQuizLabel[0].ResetStartAction();
         float startActiveTime = tweenQuizLabel[0].GetAnimationDuration();
 
         for (int i = 0; i < tweenAnswerLabel.Length; i++)
-        {
-            tweenAnswerLabel[i].SetStartValues();
-            tweenAnswerLabel[i].ChangeSetState(false);
-            tweenAnswerLabel[i].OpenCloseObjectAnimation();
-            tweenAnswerLabel[i].GetAnimationDuration();
-        }
+            tweenAnswerLabel[i].ResetStartAction();
 
         Invoke("InvokeStartActive", startActiveTime + 0.1f);
     }
@@ -200,10 +221,8 @@ public class BattleUI : UIAbstract
         IsAction = false;
         quiz.ResetTime();
         SetTime(quiz.TimeSec);
-
-        tweenQuizLabel[1].SetStartValues();
-        tweenQuizLabel[1].ChangeSetState(false);
-        tweenQuizLabel[1].OpenCloseObjectAnimation();
+                
+        tweenQuizLabel[1].ResetStartAction();
         float NextTime = tweenQuizLabel[1].GetAnimationDuration();
         Invoke("InvokeNextQuiz", NextTime + 0.1f);
 
@@ -247,6 +266,11 @@ public class BattleUI : UIAbstract
     private void SetTime(float time)
     {
         secLabel.text = string.Format("{0:f3}", time);
+    }
+
+    private void SetActiveClearMessage(bool IsActive)
+    {
+        clearMessage.gameObject.SetActive(IsActive);
     }
 
 
@@ -332,10 +356,20 @@ public class BattleUI : UIAbstract
 
     }
 
-    //ExitEvent
-    private void OnExitEvent()
+    // show clear message
+    private void ShowClearMessage(string message)
     {
+        clearMessage.text = message;
+        SetActiveClearMessage(true);
+        clearMessageTween.ResetStartAction();
+    }
+
+
+    private void OnClearExit()
+    {
+        Close();
+
         if (parentOpenMeUI != null)
             parentOpenMeUI.Open();
-    }
+    }    
 }
