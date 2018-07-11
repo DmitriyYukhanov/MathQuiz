@@ -19,10 +19,13 @@ public class BattleUI : UIAbstract
     // quiz label center label tween
     [SerializeField]
     private EasyTween[] tweenQuizLabel;
-
+    
     // answer Label tween
     [SerializeField]
     private EasyTween[] tweenAnswerLabel;
+
+    [SerializeField]
+    private GameObject[] answerBgGo;
 
     // QuestionLabel
     [SerializeField]
@@ -124,6 +127,7 @@ public class BattleUI : UIAbstract
             });
         }
 
+        button = null;
         //OnExitEventHandler -= OnExitEvent;
         //OnExitEventHandler += OnExitEvent;
 
@@ -131,6 +135,7 @@ public class BattleUI : UIAbstract
         SetReadyCount(3, true);
         SetTime(quiz.TimeSec);
         SetActiveClearMessage(false);
+        SetAnswerButton(true);
     }
 
     public void Clear()
@@ -182,10 +187,10 @@ public class BattleUI : UIAbstract
     private void InitAnimation()
     {
         tweenQuizLabel[0].SetStartValues();        
-        for (int i = 0; i < tweenAnswerLabel.Length; i++)
-        {
-            tweenAnswerLabel[i].SetStartValues();            
-        }
+        for (int i = 0; i < tweenAnswerLabel.Length; i++)                    
+            tweenAnswerLabel[i].SetStartValues();
+
+        SetAnswerButton(true);
     }
 
     // start animation
@@ -219,6 +224,7 @@ public class BattleUI : UIAbstract
     private void NextQuizAnimated()
     {
         IsAction = false;
+        SetAnswerButton(true);
         quiz.ResetTime();
         SetTime(quiz.TimeSec);
                 
@@ -228,11 +234,19 @@ public class BattleUI : UIAbstract
 
     }
 
+    // show & hide bg 
+    private void SetAnswerButton(bool IsShow)
+    {
+        for (int i = 0; i < answerBgGo.Length; i++)
+            answerBgGo[i].SetActive(IsShow);
+    }
+
 
     // button Event Active
     private void InvokeStartActive()
     {
         IsAction = true;
+        SetAnswerButton(false);
     }
 
     // onApp Pause don't cheat.
