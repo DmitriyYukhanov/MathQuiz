@@ -103,7 +103,7 @@ public class BattleUI : UIAbstract
 
     public void Init(QuestionType quetionType)
     {
-        quiz = new MakeQuestion(quetionType, 3);
+        quiz = new MakeQuestion(quetionType, 3); 
 
         UnityEngine.UI.Button button = null;
         button = clearMessage.gameObject.GetComponent<UnityEngine.UI.Button>();
